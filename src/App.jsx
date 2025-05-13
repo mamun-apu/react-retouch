@@ -17,7 +17,7 @@ import SearchAutocomplete from "./components/search-autocomplete-with-api";
 import StarRating from "./components/star-rating";
 import TicTacToe from "./components/tic-tact-toe";
 import TreeView from "./components/tree-view";
-import menus from "./components/tree-view/data";
+// import menus from "./components/tree-view/data";
 import UseFetchHookTest from "./components/use-fetch/test";
 import UseOnclickOutsideTest from "./components/use-outside-click/test";
 import UseWindowResizeTest from "./components/use-window-resize/test";
@@ -26,9 +26,9 @@ function App() {
   return (
     <div className="App">
       {/* Accordian component */}
-      {/* <Accordian/> */}
+      <Accordian/>
       {/* Random color component */}
-      {/* <RandomColor/> */}
+      <RandomColor/>
 
       {/* Star rating component */}
       {/* <StarRating noOfStars={10}/> */}

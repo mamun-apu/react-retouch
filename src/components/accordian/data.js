@@ -1,8 +1,8 @@
-const data = [
+const data =  [
     {
-      "id": 1,
-      "question": "What is React?",
-      "answer": "React is a JavaScript library for building user interfaces, maintained by Facebook."
+        "id": 1,
+        "question": "What is JavaScript",
+        "answer": "JavaScript is a programming language",
     },
     {
       "id": 2,
@@ -24,7 +24,6 @@ const data = [
       "question": "What is useState in React?",
       "answer": "useState is a React Hook that lets you add state to functional components."
     }
-  ];
-  
-  export default data;
 
+]
+export default data;

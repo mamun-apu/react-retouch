@@ -5,47 +5,45 @@ import "./styles.css";
 export default function ImageSlider({ url, limit = 5, page = 1 }) {
   const [images, setImages] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  async function fetchImages(getUrl) {
-    try {
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (!url) return;
+
       setLoading(true);
+      setError(null);
 
-      const response = await fetch(`${getUrl}?page=${page}&limit=${limit}`);
-      const data = await response.json();
+      try {
+        const response = await fetch(`${url}?page=${page}&limit=${limit}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-      if (data) {
-        setImages(data);
+        const data = await response.json();
+        setImages(data || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
       }
-    } catch (e) {
-      setErrorMsg(e.message);
-      setLoading(false);
-    }
-  }
+    };
 
-  function handlePrevious() {
-    setCurrentSlide(currentSlide === 0 ? images.length - 1 : currentSlide - 1);
-  }
+    fetchImages();
+  }, [url, limit, page]);
 
-  function handleNext() {
-    setCurrentSlide(currentSlide === images.length - 1 ? 0 : currentSlide + 1);
-  }
+  const handlePrevious = () => {
+    setCurrentSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
 
-  useEffect(() => {
-    if (url !== "") fetchImages(url);
-  }, [url]);
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
-  console.log(images);
-
-  if (loading) {
-    return <div>Loading data ! Please wait</div>;
-  }
-
-  if (errorMsg !== null) {
-    return <div>Error occured ! {errorMsg}</div>;
-  }
+  if (loading) return <div>Loading data... Please wait.</div>;
+  if (error) return <div>Error occurred: {error}</div>;
+  if (!images.length) return <div>No images to display.</div>;
 
   return (
     <div className="container">
@@ -53,38 +51,34 @@ export default function ImageSlider({ url, limit = 5, page = 1 }) {
         onClick={handlePrevious}
         className="arrow arrow-left"
       />
-      {images && images.length
-        ? images.map((imageItem, index) => (
-            <img
-              key={imageItem.id}
-              alt={imageItem.download_url}
-              src={imageItem.download_url}
-              className={
-                currentSlide === index
-                  ? "current-image"
-                  : "current-image hide-current-image"
-              }
-            />
-          ))
-        : null}
+      {images.map((image, index) => (
+        <img
+          key={image.id}
+          alt={image.download_url}
+          src={image.download_url}
+          className={
+            index === currentSlide
+              ? "current-image"
+              : "current-image hide-current-image"
+          }
+        />
+      ))}
       <BsArrowRightCircleFill
         onClick={handleNext}
         className="arrow arrow-right"
       />
       <span className="circle-indicators">
-        {images && images.length
-          ? images.map((_, index) => (
-              <button
-                key={index}
-                className={
-                  currentSlide === index
-                    ? "current-indicator"
-                    : "current-indicator inactive-indicator"
-                }
-                onClick={() => setCurrentSlide(index)}
-              ></button>
-            ))
-          : null}
+        {images.map((_, index) => (
+          <button
+            key={index}
+            className={
+              index === currentSlide
+                ? "current-indicator"
+                : "current-indicator inactive-indicator"
+            }
+            onClick={() => setCurrentSlide(index)}
+          ></button>
+        ))}
       </span>
     </div>
   );
